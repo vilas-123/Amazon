@@ -45,6 +45,9 @@ INSTALLED_APPS = [
     'api.Profile',
     'api.Product',
     'api.subcategory',
+    'api.cart',
+    'api.cartitem',
+    'api.cartex',
     
     'rest_framework',
     'corsheaders',
@@ -156,9 +159,32 @@ REST_FRAMEWORK = {
        'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
    ),
+   
+   'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ]
 }
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    
+    "http://localhost:3001",
 ]
+
+CORS_ALLOW_METHODS = [
+    "DELETE",
+]
+
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+    "loggedid",
+]
+
+
+CORS_ALLOW_METHODS = ['PATCH', 'GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']

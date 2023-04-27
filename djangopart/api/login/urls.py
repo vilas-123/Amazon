@@ -9,4 +9,5 @@ router.register(r'',views.loginviewset)
 
 urlpatterns = [
     path('',include(router.urls))
+    
 ]

@@ -3,9 +3,10 @@ import './App.css';
 import { Route, Routes } from 'react-router-dom';
 import Login from './components/Login';
 import Signup from './components/Signup';
-import Add_Product from './components/Add_Product';
-import Update_profile from './components/Update_profile';
+import AddProduct from './components/AddProduct';
+import UpdateProfile from './components/UpdateProfile';
 import Store from './components/Store';
+import Cart from './components/Cart';
 
 function App() {
   return (
@@ -16,8 +17,9 @@ function App() {
         <Route path='/store' element={<Store />}></Route>
         <Route path='/login' element={<Login />}></Route>
         <Route path='/Signup' element={<Signup />}></Route>
-        <Route path='/AddProduct' element={<Add_Product />}></Route>
-        <Route path='/UpdateProfile' element={<Update_profile />}></Route>
+        <Route path='/AddProduct' element={<AddProduct />}></Route>
+        <Route path='/UpdateProfile' element={<UpdateProfile />}></Route>
+        <Route path='/cart' element={<Cart />}></Route>
       </Routes>
 
     </div>

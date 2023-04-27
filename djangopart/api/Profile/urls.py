@@ -7,5 +7,6 @@ router=routers.DefaultRouter()
 router.register(r'',views.profileviewset)
 
 urlpatterns = [
-    path('',include(router.urls))
+    path('',include(router.urls)),
+    path('profile',views.profileviewset)
 ]

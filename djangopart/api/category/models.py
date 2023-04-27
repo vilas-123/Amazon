@@ -8,3 +8,8 @@ class category(models.Model):
 
     def __str__(self):
         return self.name
+    
+    
+    @property
+    def my_model_id(self):
+        return self.id

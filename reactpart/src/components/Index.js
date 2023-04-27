@@ -1,5 +1,45 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import axios from 'axios'
 function Index() {
+
+    const [loggedid,setloggedid]=useState("")
+    const [users,setusers]=useState([])
+
+    useEffect(() => {
+        axios.get("http://127.0.0.1:8000/api/signup/")
+        .then(response=>{console.log(response.data);setusers(response.data)})
+        
+      }, []);
+
+      useEffect(()=>{
+        for(const user of users){
+            if(user.logged===true){
+                setloggedid(user.id)
+                console.log(user.id)
+            }
+        }
+      })
+    
+      const logout = (e) => {
+        
+        // console.log(users[0].id)
+        console.log("loggedid:"+loggedid)
+        const token = "0971ec5ae480ee59aee0a0f7ff6da785ef7b27cd"
+        axios.patch(`http://127.0.0.1:8000/api/signup/${loggedid}/`,
+                    { logged: false },
+                    {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}` // add your token here
+                        }
+                    })
+                    .then(response => {
+                        console.log(response.data);
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+      };
     
   return (
     <div>
@@ -20,16 +60,19 @@ function Index() {
                     <li className="nav-item">
                         <a className="nav-link" href="AddProduct" >Add Product</a>
                     </li>
+                    <li className="nav-item">
+                        <a className="nav-link" href="cart" >cart</a>
+                    </li>
                     <li className="nav-item dropdown">
                         <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Account
                         </a>
                         <div className="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a className="dropdown-item" href="login" >Login</a>
-                            <a className="dropdown-item" href="Signup" >Signup</a>
-                            <a className="dropdown-item" href="ChangePassword">Change Password</a>
-                            <a className="dropdown-item" href="UpdateProfile" >Update Profile</a>
-                            <a className="dropdown-item" href="Logout" >Logout</a>
+                            {!loggedid && <a className="dropdown-item" href="login" >Login</a>}
+                            {!loggedid && <a className="dropdown-item" href="Signup" >Signup</a>}
+                            {loggedid && <a className="dropdown-item" href="ChangePassword">Change Password</a>}
+                            {loggedid && <a className="dropdown-item" href="UpdateProfile" >Update Profile</a>}
+                            {loggedid && <a className="dropdown-item" href="#" onClick={(e)=>{logout()}}>Logout</a>}
                         </div>
                     </li>
                 </ul>
