@@ -39,6 +39,7 @@ function Index() {
                     .catch(error => {
                         console.error(error);
                     });
+                    window.location.reload()
       };
     
   return (
@@ -72,6 +73,7 @@ function Index() {
                             {!loggedid && <a className="dropdown-item" href="Signup" >Signup</a>}
                             {loggedid && <a className="dropdown-item" href="ChangePassword">Change Password</a>}
                             {loggedid && <a className="dropdown-item" href="UpdateProfile" >Update Profile</a>}
+                            {loggedid && <a className="dropdown-item" href="order" >Your Order</a>}
                             {loggedid && <a className="dropdown-item" href="#" onClick={(e)=>{logout()}}>Logout</a>}
                         </div>
                     </li>

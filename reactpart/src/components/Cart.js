@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import Order from './Order';
+
 
 function Cart() {
 
@@ -213,48 +216,99 @@ function Cart() {
     }
 
 
+    const checkout = (e) => {
+        e.preventDefault()
+
+        let pid = 0
+
+        for (const item of cartlist) {
+            pid = item.productid
+            // const citem = products.find(product => product.id === pid);
+            // axios.post(`http://127.0.0.1:8000/api/order/order/${userid}/`)
+            const token = "0971ec5ae480ee59aee0a0f7ff6da785ef7b27cd"
+            axios.post(`http://127.0.0.1:8000/api/order/order/${userid}/`, {
+                'userid': userid,
+                'productid': pid,
+                'status':false,
+                'quantity':item.quantity,
+            },
+                // {itemid,userid},
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` // add your token here
+                        // 'X-CSRFToken': token
+                    }
+                })
+                .then(response => { console.log(response.data); console.log("status:success") })
+                .catch(error => {
+                    console.error(error);
+                });
+
+            axios.delete(`http://localhost:8000/api/cartex/carts/${userid}/?productid=${pid}`)
+                .then(response => {
+                    console.log('Deleted cart:', response.data);
+                })
+                .catch(error => {
+                    console.error('Error deleting cart:', error);
+                });
+
+
+                
+              
+        }
+        <Router>
+            <Route exact path="/order" component={Order} />
+        </Router>
+
+    }
+
     return (
         <div>
-            <div>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>item name</th>
-                            <th>quantity</th>
-                            <th>price</th>
-                            <th>total price</th>
-                            <th>remove/add</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {cartlist.map(i => (
+            {cartlist?.length && <div>
+                <div>
+                    <table class="table">
+                        <thead>
                             <tr>
-                                <td scope="row">{i.name}</td>
-                                <td>{i.quantity}</td>
-                                <td>{i.price}</td>
-                                <td>{i.itemtotal}</td>
-                                <td>
-                                    <div>
-                                        <button type="submit" className='btn btn-outline-danger mt-2 ml-4 p-1 center' name="remove" style={{ float: 'left' }} onClick={(e) => { remove(e, i.productid); setitemid(i.productid) }}> - </button>
-                                        <button type="submit" className='btn btn-outline-dark mt-2 ml-4 p-1' name="add" style={{ float: 'left' }} onClick={(e) => { add(e, i.productid); setitemid(i.productid) }}> + </button>
-                                    </div>
+                                <th>item name</th>
+                                <th>quantity</th>
+                                <th>price</th>
+                                <th>total price</th>
+                                <th>remove/add</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {cartlist.map(i => (
+                                <tr>
+                                    <td scope="row">{i.name}</td>
+                                    <td>{i.quantity}</td>
+                                    <td>{i.price}</td>
+                                    <td>{i.itemtotal}</td>
+                                    <td>
+                                        <div>
+                                            <button type="submit" className='btn btn-outline-danger mt-2 ml-4 p-1 center' name="remove" style={{ float: 'left' }} onClick={(e) => { remove(e, i.productid); setitemid(i.productid) }}> - </button>
+                                            <button type="submit" className='btn btn-outline-dark mt-2 ml-4 p-1' name="add" style={{ float: 'left' }} onClick={(e) => { add(e, i.productid); setitemid(i.productid) }}> + </button>
+                                        </div>
 
-                                </td>
-                            </tr>)
-                        )}
+                                    </td>
+                                </tr>)
+                            )}
 
 
-                    </tbody>
-                    <tr>
-                        <th>Total:- </th>
-                        <td>{total}</td>
-                    </tr>
-                </table>
-            </div>
+                        </tbody>
+                        <tr>
+                            <th>Total:- </th>
+                            <td>{total}</td>
+                        </tr>
+                    </table>
+                </div>
 
-            <div className='mr-5 float-right'>
-                <button type="button" className="btn btn-outline-success ">Checkout</button>
-            </div>
+                <div className='mr-5 float-right'>
+                    <button type="button" className="btn btn-outline-success " onClick={(e) => { checkout(e) }}>Checkout</button>
+                </div>
+            </div>}
+            {!cartlist?.length && <div className='alert alert-danger'>Cart Khali hai anna !!!</div>}
+
 
         </div>
     )

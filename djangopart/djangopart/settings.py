@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'api.cart',
     'api.cartitem',
     'api.cartex',
+    'api.order',
     
     'rest_framework',
     'corsheaders',

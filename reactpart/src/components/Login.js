@@ -56,6 +56,7 @@ function Login() {
         }
 
 
+        window.location.replace('store')
     }
 
 

@@ -16,6 +16,7 @@ urlpatterns = [
     path('carts/',include('api.carts.urls')),
     path('cartex/',include('api.cartex.urls')),
     path('cartitem/',include('api.cartitem.urls')),
+     path('order/',include('api.order.urls')),
     path('Profile/',include('api.Profile.urls')),
     path('subcategory/',include('api.subcategory.urls')),
 ]

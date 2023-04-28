@@ -15,6 +15,7 @@ function Store() {
     const [cat, setcat] = useState([])
     const [subcategoryNames, setsubCategoryNames] = useState({});
     const [categoryNames, setCategoryNames] = useState({});
+    const [categoryselect,setcategoryselect]=useState("")
 
 
     const getuser = async () => {
@@ -162,14 +163,22 @@ function Store() {
 
     
 
+    
+
     return (
         <div>
             {/* {JSON.stringify(items)} */}
             <div className='row'>
                 <div className='col-3 mt-4'>
+                    <div className='row'>
                     {cat.map(item => (
-                        <button type="button" class="btn btn-light">{item.name}</button>
+                        <button type="button" class="btn btn-light col-12" value={item.url} onClick={(e)=>{setItem(items.filter(i => i.category.toString() === e.target.value.toString()));
+                            // console.log("itemcategory:",i.category, " ", "selected:",e.target.value)
+                            console.log('filteredItems:', items);
+                            console.log('item:', item);}}>{item.name}</button>
                     ))}
+                    </div>
+                    
                 </div>
                 <div className='col-9'>
                     <div className='container'>
