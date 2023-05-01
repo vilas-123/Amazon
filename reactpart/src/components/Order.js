@@ -43,6 +43,7 @@ const getuser = async () => {
                 // console.log(response.data)
                 // console.log("products:-")
                 // console.log(products)
+                console.log(response.data)
                 let sum = 0
                 for (const product of products) {
                     for (const citm of response.data) {

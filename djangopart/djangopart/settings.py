@@ -42,13 +42,14 @@ INSTALLED_APPS = [
     'api.category',
     'api.login',
     'api.signup',
-    'api.Profile',
+    'api.profileapp',
     'api.Product',
     'api.subcategory',
     'api.cart',
     'api.cartitem',
     'api.cartex',
     'api.order',
+    'api.address',
     
     'rest_framework',
     'corsheaders',
@@ -69,7 +70,7 @@ MIDDLEWARE = [
 
 
 
-CORS_ORIGIN_ALLOW_ALL=True
+
 
 ROOT_URLCONF = 'djangopart.urls'
 
@@ -166,13 +167,25 @@ REST_FRAMEWORK = {
     ]
 }
 
+CORS_ORIGIN_ALLOW_ALL=True
+# CORS_ORIGIN_WHITELIST = [    'http://localhost:3001',]
+
+
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:3001",
+# ]
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3001",
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'http://localhost:3002',
 ]
 
-CORS_ALLOW_METHODS = [
-    "DELETE",
-]
+
+# Access-Control-Allow-Origin: http://localhost:3000
+# Access-Control-Allow-Methods: 
+# Access-Control-Allow-Headers: Origin, Content-Type, Authorization
+
+
 
 CORS_ALLOW_HEADERS = [
     "accept",

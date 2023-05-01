@@ -17,7 +17,8 @@ urlpatterns = [
     path('cartex/',include('api.cartex.urls')),
     path('cartitem/',include('api.cartitem.urls')),
      path('order/',include('api.order.urls')),
-    path('Profile/',include('api.Profile.urls')),
+     path('address/',include('api.address.urls')),
+    path('profile/',include('api.profileapp.urls')),
     path('subcategory/',include('api.subcategory.urls')),
 ]
 

@@ -1,7 +1,11 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+
 
 function AddProduct() {
+
+    const navigate = useNavigate()
 
     const [categorylist, setcategorylist] = useState([])
     const [subcategorylist, setsubcategorylist] = useState([])
@@ -87,7 +91,9 @@ function AddProduct() {
             })
                 .then(response => {
                     console.log("post data is:- " + response.data)
+
                     seterror("")
+                    navigate("/store")
                 })
                 .catch(err => {
                     console.log(err.response.data);
@@ -97,6 +103,7 @@ function AddProduct() {
                 })
         }
 
+
     }
 
     return (
@@ -104,8 +111,10 @@ function AddProduct() {
             <div className='row'>
                 <div className='col-4'></div>
                 <div className='col-4'>
-                    <form onSubmit={(e) => submithandler(e)} encType="multipart/form-data">
+                    <form className='p-2' style={{ border: '2px solid grey' }} onSubmit={(e) => submithandler(e)} encType="multipart/form-data">
+                        <div class="alert alert-secondary" role="alert">Add Product</div>
                         {error !== "" && <div class="alert alert-danger" role="alert">{error}</div>}
+
                         <div className="form-group">
                             <label >Name: </label>
                             <input type="text" name="name" className="form-control" onChange={(e) => { setname(e.target.value) }} />
@@ -125,7 +134,9 @@ function AddProduct() {
 
                         <div class="form-group">
                             <label for="">Category: </label>
-                            <select class="form-control" name="category" onChange={(e) => { setcategory(e.target.value);; console.log(category) }}>
+
+                            <select class="form-control" name="category" onChange={(e) => { setcategory(e.target.value); console.log(category) }}>
+                                <option>select category</option>
                                 {categorylist.map(cat => (
                                     <option value={cat.url}>{cat.name}</option>
                                 ))}
@@ -133,13 +144,15 @@ function AddProduct() {
                         </div>
                         <div class="form-group">
                             <label for="">SubCategory: </label>
+
                             <select class="form-control" name="subcategory" onChange={(e) => { setsubcategory(e.target.value); console.log(subcategory) }}>
+                                <option>select subcategory</option>
                                 {subcategorylist.map(subcat => (
                                     <option value={subcat.url}>{subcat.name}</option>
                                 ))}
                             </select>
                         </div>
-                        <button type="submit" class="btn btn-outline-success">Add Product</button>
+                        <button type="submit" class="btn btn-outline-success align-content-end">Add Product</button>
                     </form>
                 </div>
                 <div className='col-4'></div>

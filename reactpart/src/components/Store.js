@@ -15,7 +15,7 @@ function Store() {
     const [cat, setcat] = useState([])
     const [subcategoryNames, setsubCategoryNames] = useState({});
     const [categoryNames, setCategoryNames] = useState({});
-    const [categoryselect,setcategoryselect]=useState("")
+    const [categoryselect, setcategoryselect] = useState("")
 
 
     const getuser = async () => {
@@ -83,87 +83,96 @@ function Store() {
     }, [items]);
 
 
-    const addtocart = async(e, id) => {
+    const addtocart = async (e, id) => {
+
         e.preventDefault()
-        let qty=0;
+        let qty = 0;
 
-        try {
+        if (userid) {
 
-            await axios.get(`http://localhost:8000/api/cartex/carts/${userid}/`)
-                .then(response => {
-                    // console.log(cartitems)
-                    for (const cartitem of response.data) {
-                        if (cartitem.productid === id) {
-                            qty = cartitem.quantity
-                            console.log("qty: "+qty)
+
+            try {
+
+                await axios.get(`http://localhost:8000/api/cartex/carts/${userid}/`)
+                    .then(response => {
+                        // console.log(cartitems)
+                        for (const cartitem of response.data) {
+                            if (cartitem.productid === id) {
+                                qty = cartitem.quantity
+                                console.log("qty: " + qty)
+                            }
                         }
-                    }
-                    // setcartitems(response.data)
+                        // setcartitems(response.data)
                     })
 
-        }
-        catch (error) {
-            console.log(error)
-        }
+            }
+            catch (error) {
+                console.log(error)
+            }
 
 
 
-        
-        if (qty > 0) {
-            qty=qty+1
-            console.log("qty>0: "+qty)
-            const token = "0971ec5ae480ee59aee0a0f7ff6da785ef7b27cd"
-            await axios.patch(`http://localhost:8000/api/cartex/carts/${userid}/`, {
-                'quantity': qty,
-                'userid': userid,
-                'productid': id
-            },
-                // {itemid,userid},
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}` // add your token here
-                        // 'X-CSRFToken': token
-                    }
-                })
-                .then(response => { console.log(response.data);setquantity(response.data.quantity); console.log("status:success") })
-                .catch(error => {
-                    console.error(error);
-                });
-                
+
+            if (qty > 0) {
+                qty = qty + 1
+                console.log("qty>0: " + qty)
+                const token = "0971ec5ae480ee59aee0a0f7ff6da785ef7b27cd"
+                await axios.patch(`http://localhost:8000/api/cartex/carts/${userid}/`, {
+                    'quantity': qty,
+                    'userid': userid,
+                    'productid': id
+                },
+                    // {itemid,userid},
+                    {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}` // add your token here
+                            // 'X-CSRFToken': token
+                        }
+                    })
+                    .then(response => { console.log(response.data); setquantity(response.data.quantity); console.log("status:success") })
+                    .catch(error => {
+                        console.error(error);
+                    });
+
+            }
+            else {
+                qty = 1
+                console.log("qty=0: " + qty)
+                const token = "0971ec5ae480ee59aee0a0f7ff6da785ef7b27cd"
+                await axios.post(`http://localhost:8000/api/cartex/carts/${userid}/`, {
+                    'quantity': qty,
+                    'userid': userid,
+                    'productid': id
+                },
+                    // {itemid,userid},
+                    {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}` // add your token here
+                            // 'X-CSRFToken': token
+                        }
+                    })
+                    .then(response => { console.log(response.data); setquantity(response.data.quantity); console.log("status:success") })
+                    .catch(error => {
+                        console.error(error);
+                    });
+
+            }
         }
         else{
-            qty=1
-            console.log("qty=0: "+qty)
-            const token = "0971ec5ae480ee59aee0a0f7ff6da785ef7b27cd"
-            await axios.post(`http://localhost:8000/api/cartex/carts/${userid}/`, {
-                'quantity': qty,
-                'userid': userid,
-                'productid': id
-            },
-                // {itemid,userid},
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}` // add your token here
-                        // 'X-CSRFToken': token
-                    }
-                })
-                .then(response => { console.log(response.data); setquantity(response.data.quantity);console.log("status:success") })
-                .catch(error => {
-                    console.error(error);
-                });
-                
+            alert("Please login to continue !!")
+            
         }
 
-        
-// bhai issue clear nahi ho raha call pe aja 
+
+        // bhai issue clear nahi ho raha call pe aja 
 
     }
 
-    
 
-    
+
+
 
     return (
         <div>
@@ -171,28 +180,61 @@ function Store() {
             <div className='row'>
                 <div className='col-3 mt-4'>
                     <div className='row'>
-                    {cat.map(item => (
-                        <button type="button" class="btn btn-light col-12" value={item.url} onClick={(e)=>{setItem(items.filter(i => i.category.toString() === e.target.value.toString()));
-                            // console.log("itemcategory:",i.category, " ", "selected:",e.target.value)
-                            console.log('filteredItems:', items);
-                            console.log('item:', item);}}>{item.name}</button>
-                    ))}
+                        {cat.map(item => (
+                            <button type="button" class="btn btn-secondary col-12" value={item.url} onClick={(e) => {
+                                setItem(items.filter(i => i.category.toString() === e.target.value.toString()));
+                            }}>{item.name}</button>
+                        ))}
                     </div>
-                    
                 </div>
                 <div className='col-9'>
+
+
                     <div className='container'>
                         <div className='row'>
                             {items.map(item => (
 
                                 <div className='col-md-4 '>
+                                    <div class="modal fade" id={`myModal${item.id}`} tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="myModalLabel">{item.name}</h5>
+
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div className='row'>
+                                                        <div className='col'><img src={item.image} class="img-fluid " alt="" /></div>
+                                                        <div className='col'>
+                                                            <p>{item.detail}</p>
+                                                            <ul className="list-group list-group-flush">
+                                                                <li className="list-group-item">{item.details}</li>
+                                                                <li className="list-group-item">Price: {item.price}</li>
+
+                                                                <li className="list-group-item">{categoryNames[item.category]}</li>
+                                                                <li className="list-group-item">{subcategoryNames[item.subcategory]}</li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+
+
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div className="card mx-auto mb-3 h-100">
                                         {/* <img className="card-img-top" src="..." alt="Card image cap"> */}
                                         <div className="card-body">
 
                                             <img src={item.image} class="img-fluid " alt="" />
                                             <h5 className="card-title">{item.name}</h5>
-                                            <p className="card-text">{item.detail}</p>
+                                            <p className="card-text">{item.details}</p>
                                         </div>
                                         <ul className="list-group list-group-flush">
                                             <li className="list-group-item">Price: {item.price}</li>
@@ -204,11 +246,19 @@ function Store() {
                                         <div className='row'>
                                             <div className='col-6'>
                                                 <div class="form-group">
-                                                    <button type="submit" className="btn btn-outline-success mt-2" name="addtocart" onClick={(e) => { setitemid(item.id); console.log(itemid); addtocart(e, item.id); }}>Add to cart</button>
+                                                    <button type="submit" className="btn btn-outline-success mt-2" name="addtocart" onClick={(e) => { setitemid(item.id); console.log(itemid); addtocart(e, item.id); }}><span className='danger'>{item.quantity}</span>Add to cart</button>
+
                                                 </div>
                                             </div>
+                                            <div className='col-6'>
+                                                <button type="button" class="btn btn-outline-success mt-2" data-toggle="modal" data-target={`#myModal${item.id}`}>
+                                                    view
+                                                </button>
+                                            </div>
 
-                                            
+
+
+
                                         </div>
 
 

@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Order from './Order';
 
 
+
 function Cart() {
+
+    const navigator=useNavigate()
 
     const [products, setproducts] = useState([])
     const [users, setusers] = useState([])
@@ -204,6 +207,7 @@ function Cart() {
             axios.delete(`http://localhost:8000/api/cartex/carts/${userid}/?productid=${id}`)
                 .then(response => {
                     console.log('Deleted cart:', response.data);
+                    window.location.reload()
                 })
                 .catch(error => {
                     console.error('Error deleting cart:', error);
@@ -211,7 +215,7 @@ function Cart() {
 
 
         }
-        window.location.reload()
+        
 
     }
 
@@ -253,13 +257,10 @@ function Cart() {
                     console.error('Error deleting cart:', error);
                 });
 
-
-                
+                navigator("/order")
               
         }
-        <Router>
-            <Route exact path="/order" component={Order} />
-        </Router>
+        
 
     }
 
