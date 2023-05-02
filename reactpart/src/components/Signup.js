@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 
 
 function Signup() {
-    const navigate=useNavigate()
+    const navigate = useNavigate()
 
     const [error, seterror] = useState("")
     const [user, setuser] = useState([])
@@ -38,14 +38,22 @@ function Signup() {
         ))
 
         if (flag) {
-            seterror("email already exist")
+            seterror("email already exist !!")
         }
         else {
-            axios.post('http://127.0.0.1:8000/api/signup/', {
-                name, email, password
-            })
-                .then(response => {console.log(response);navigate("/login")})
-                .catch(error => console.log(error))
+            const emailRegex = /^[a-zA-Z]+\d+(@gmail\.com)$/;
+            const isValidEmail = emailRegex.test(email);
+            if (isValidEmail) {
+                axios.post('http://127.0.0.1:8000/api/signup/', {
+                    name, email, password
+                })
+                    .then(response => { console.log(response); navigate("/login") })
+                    .catch(error => console.log(error))
+            }
+            else{
+                seterror("Please enter valid email id !!")
+            }
+
         }
 
 

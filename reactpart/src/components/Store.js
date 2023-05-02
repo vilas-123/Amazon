@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import axios from 'axios'
 import cart from './Cart'
+import AuthContext from './context/ContextProvider'
 
 
 
 function Store() {
+    const { userId } = useContext(AuthContext)
     const [cartitems, setcartitems] = useState([])
     const [users, setusers] = useState([])
     const [userid, setuserid] = useState("")
@@ -18,25 +20,25 @@ function Store() {
     const [categoryselect, setcategoryselect] = useState("")
 
 
-    const getuser = async () => {
-        try {
-            const response = await axios.get('http://127.0.0.1:8000/api/signup/');
-            console.log(response.data);
-            setusers(response.data);
+    // const getuser = async () => {
+    //     try {
+    //         const response = await axios.get('http://127.0.0.1:8000/api/signup/');
+    //         console.log(response.data);
+    //         setusers(response.data);
 
-            // find the logged-in user and set the userid state based on their id
-            const loggedInUser = response.data.find(user => user.logged === true);
-            if (loggedInUser) {
-                setuserid(loggedInUser.id);
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    }
+    //         // find the logged-in user and set the userid state based on their id
+    //         const loggedInUser = response.data.find(user => user.logged === true);
+    //         if (loggedInUser) {
+    //             setuserid(loggedInUser.id);
+    //         }
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // }
 
-    useEffect(() => {
-        getuser()
-    }, []);
+    // useEffect(() => {
+    //     getuser()
+    // }, []);
 
 
 
@@ -88,12 +90,12 @@ function Store() {
         e.preventDefault()
         let qty = 0;
 
-        if (userid) {
+        if (userId) {
 
 
             try {
 
-                await axios.get(`http://localhost:8000/api/cartex/carts/${userid}/`)
+                await axios.get(`http://localhost:8000/api/cartex/carts/${userId}/`)
                     .then(response => {
                         // console.log(cartitems)
                         for (const cartitem of response.data) {
@@ -117,9 +119,9 @@ function Store() {
                 qty = qty + 1
                 console.log("qty>0: " + qty)
                 const token = "0971ec5ae480ee59aee0a0f7ff6da785ef7b27cd"
-                await axios.patch(`http://localhost:8000/api/cartex/carts/${userid}/`, {
+                await axios.patch(`http://localhost:8000/api/cartex/carts/${userId}/`, {
                     'quantity': qty,
-                    'userid': userid,
+                    'userid': userId,
                     'productid': id
                 },
                     // {itemid,userid},
@@ -140,9 +142,9 @@ function Store() {
                 qty = 1
                 console.log("qty=0: " + qty)
                 const token = "0971ec5ae480ee59aee0a0f7ff6da785ef7b27cd"
-                await axios.post(`http://localhost:8000/api/cartex/carts/${userid}/`, {
+                await axios.post(`http://localhost:8000/api/cartex/carts/${userId}/`, {
                     'quantity': qty,
-                    'userid': userid,
+                    'userid': userId,
                     'productid': id
                 },
                     // {itemid,userid},
@@ -160,9 +162,9 @@ function Store() {
 
             }
         }
-        else{
+        else {
             alert("Please login to continue !!")
-            
+
         }
 
 
@@ -171,17 +173,29 @@ function Store() {
     }
 
 
+    const filteritem=(e,val)=>{
+        setItem(items.filter(i => (i.name.toString()).toLowerCase().includes((e.target.value.toString()).toLowerCase())));
+    }
+
 
 
 
     return (
         <div>
             {/* {JSON.stringify(items)} */}
+            <div className="container mb-2 mt-2">
+                <div className="d-flex justify-content-end">
+                    <input className="form-control w-25 " type="search" placeholder="Search" aria-label="Search" onChange={(e)=>filteritem(e,e.target.value)}/>
+                    <button className="btn btn-outline-success my-2 my-sm-0 ml-2" type="submit">Search</button>
+                </div>
+            </div>
+
+
             <div className='row'>
                 <div className='col-3 mt-4'>
                     <div className='row'>
                         {cat.map(item => (
-                            <button type="button" class="btn btn-secondary col-12" value={item.url} onClick={(e) => {
+                            <button type="button" class="btn btn-secondary col-6 ml-4" value={item.url} onClick={(e) => {
                                 setItem(items.filter(i => i.category.toString() === e.target.value.toString()));
                             }}>{item.name}</button>
                         ))}

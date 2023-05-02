@@ -1,8 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Cart from './Cart'
 import axios from 'axios'
+import AuthContext from './context/ContextProvider'
 
 function Order() {
+
+    const {userId}=useContext(AuthContext)
   const [cartitem,setcartitem]=useState([])
   const [products, setproducts] = useState([])
     const [userid, setuserid] = useState("")
@@ -18,36 +21,38 @@ function Order() {
         console.log(error);
     }
 }
-const getuser = async () => {
-    try {
-        const response = await axios.get('http://127.0.0.1:8000/api/signup/');
-        console.log(response.data);
-        // setusers(response.data);
-        const loggedInUser = response.data.find(user => user.logged === true);
-        if (loggedInUser) {
-            setuserid(loggedInUser.id);
-        }
-    } catch (error) {
-        console.log(error);
-    }
-}
+// const getuser = async () => {
+//     try {
+//         const response = await axios.get('http://127.0.0.1:8000/api/signup/');
+//         console.log(response.data);
+//         // setusers(response.data);
+//         const loggedInUser = response.data.find(user => user.logged === true);
+//         if (loggedInUser) {
+//             setuserid(loggedInUser.id);
+//         }
+//     } catch (error) {
+//         console.log(error);
+//     }
+// }
 
   const getcart = async () => {
     
     try {
-      console.log("userid:"+userid)
-        await axios.get(`http://localhost:8000/api/order/order/${userid}/`)
+      console.log("userid:"+userId)
+        await axios.get(`http://localhost:8000/api/order/order/${userId}/`)
             .then(response => {
                 let arr = []
                 // console.log("cartitems:-")
                 // console.log(response.data)
                 // console.log("products:-")
                 // console.log(products)
-                console.log(response.data)
+                console.log("response: ",response.data)
                 let sum = 0
+                console.log("products:",products)
                 for (const product of products) {
                     for (const citm of response.data) {
                         if (product.id === citm.productid) {
+                            console.log("citem: ",citm)
                             const obj = {
                                 'name': product.name,
                                 'price': product.price,
@@ -62,7 +67,7 @@ const getuser = async () => {
                         }
                     }
                 }
-                console.log(arr)
+                console.log("arr",arr)
                 return arr                // setcartitems(response.data)
             })
             .then(swdx => {
@@ -78,23 +83,28 @@ const getuser = async () => {
 
 }
 
-useEffect(() => {
-  getuser()
-}, []);
+// useEffect(() => {
+//   getuser()
+// }, []);
 
 useEffect(() => {
-  if (userid !== "") {
+//   if (userid !== "") {
 
-      getproduct()
-  }
-}, [userid]);
+      
+//   }
+getproduct()
+}, [userId]);
 
 useEffect(() => {
-  if (userid !== "") {
+    getcart()
+}, [products, userId])
 
-      getcart()
-  }
-}, [products]);
+// useEffect(() => {
+//   if (userId !== "") {
+
+      
+//   }
+// }, [products]);
 
 
   return (

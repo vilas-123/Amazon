@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import axios from 'axios'
 import { useNavigate } from "react-router-dom";
 import Order from './Order';
+import AuthContext from './context/ContextProvider';
 
 
 
 function Cart() {
 
+    const {userId}=useContext(AuthContext)
     const navigator=useNavigate()
 
     const [products, setproducts] = useState([])
@@ -27,23 +29,23 @@ function Cart() {
             console.log(error);
         }
     }
-    const getuser = async () => {
-        try {
-            const response = await axios.get('http://127.0.0.1:8000/api/signup/');
-            console.log(response.data);
-            // setusers(response.data);
-            const loggedInUser = response.data.find(user => user.logged === true);
-            if (loggedInUser) {
-                setuserid(loggedInUser.id);
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    }
+    // const getuser = async () => {
+    //     try {
+    //         const response = await axios.get('http://127.0.0.1:8000/api/signup/');
+    //         console.log(response.data);
+    //         // setusers(response.data);
+    //         const loggedInUser = response.data.find(user => user.logged === true);
+    //         if (loggedInUser) {
+    //             setuserid(loggedInUser.id);
+    //         }
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // }
 
     const getcartitem = async () => {
         try {
-            await axios.get(`http://localhost:8000/api/cartex/carts/${userid}/`)
+            await axios.get(`http://localhost:8000/api/cartex/carts/${userId}/`)
                 .then(response => {
                     let arr = []
                     // console.log("cartitems:-")
@@ -85,16 +87,17 @@ function Cart() {
 
     }
 
-    useEffect(() => {
-        getuser()
-    }, []);
+    // useEffect(() => {
+    //     getuser()
+    // }, []);
 
     useEffect(() => {
-        if (userid !== "") {
+        // if (userid !== "") {
 
-            getproduct()
-        }
-    }, [userid]);
+            
+        // }
+        getproduct()
+    }, [userId]);
 
     useEffect(() => {
         if (products?.length !== 0) {
@@ -110,7 +113,7 @@ function Cart() {
 
         try {
 
-            await axios.get(`http://localhost:8000/api/cartex/carts/${userid}/`)
+            await axios.get(`http://localhost:8000/api/cartex/carts/${userId}/`)
                 .then(response => {
                     // console.log(cartitems)
                     for (const cartitem of response.data) {
@@ -130,9 +133,9 @@ function Cart() {
         qty = qty + 1
         console.log("qty>0: " + qty)
         const token = "0971ec5ae480ee59aee0a0f7ff6da785ef7b27cd"
-        await axios.patch(`http://localhost:8000/api/cartex/carts/${userid}/`, {
+        await axios.patch(`http://localhost:8000/api/cartex/carts/${userId}/`, {
             'quantity': qty,
-            'userid': userid,
+            'userid': userId,
             'productid': id
         },
             // {itemid,userid},
@@ -159,7 +162,7 @@ function Cart() {
 
         try {
 
-            await axios.get(`http://localhost:8000/api/cartex/carts/${userid}/`)
+            await axios.get(`http://localhost:8000/api/cartex/carts/${userId}/`)
                 .then(response => {
                     // console.log(cartitems)
                     for (const cartitem of response.data) {
@@ -183,9 +186,9 @@ function Cart() {
             qty = qty - 1
             console.log("qty>0: " + qty)
             const token = "0971ec5ae480ee59aee0a0f7ff6da785ef7b27cd"
-            await axios.patch(`http://localhost:8000/api/cartex/carts/${userid}/`, {
+            await axios.patch(`http://localhost:8000/api/cartex/carts/${userId}/`, {
                 'quantity': qty,
-                'userid': userid,
+                'userid': userId,
                 'productid': id
             },
                 // {itemid,userid},
@@ -204,7 +207,7 @@ function Cart() {
         }
         else {
             console.log("itemid:" + itemid)
-            axios.delete(`http://localhost:8000/api/cartex/carts/${userid}/?productid=${id}`)
+            axios.delete(`http://localhost:8000/api/cartex/carts/${userId}/?productid=${id}`)
                 .then(response => {
                     console.log('Deleted cart:', response.data);
                     window.location.reload()
@@ -230,8 +233,8 @@ function Cart() {
             // const citem = products.find(product => product.id === pid);
             // axios.post(`http://127.0.0.1:8000/api/order/order/${userid}/`)
             const token = "0971ec5ae480ee59aee0a0f7ff6da785ef7b27cd"
-            axios.post(`http://127.0.0.1:8000/api/order/order/${userid}/`, {
-                'userid': userid,
+            axios.post(`http://127.0.0.1:8000/api/order/order/${userId}/`, {
+                'userid': userId,
                 'productid': pid,
                 'status':false,
                 'quantity':item.quantity,
@@ -249,7 +252,7 @@ function Cart() {
                     console.error(error);
                 });
 
-            axios.delete(`http://localhost:8000/api/cartex/carts/${userid}/?productid=${pid}`)
+            axios.delete(`http://localhost:8000/api/cartex/carts/${userId}/?productid=${pid}`)
                 .then(response => {
                     console.log('Deleted cart:', response.data);
                 })

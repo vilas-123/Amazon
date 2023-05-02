@@ -1,9 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import AuthContext from './context/ContextProvider'
 
 
 function UpdateProfile() {
+    const { userId } = useContext(AuthContext)
+    const { oldpassword } = useContext(AuthContext)
 
     const navigator = useNavigate()
 
@@ -21,7 +24,7 @@ function UpdateProfile() {
 
     const [profile, setprofile] = useState("")
     const [address, setaddress] = useState([])
-    const [loggedid, setloggedid] = useState("")
+    // const [userId, setuserId] = useState("")
     const [mainaddress, setmainaddress] = useState("")
     const [primaryaddressid, setprimaryaddressid] = useState("")
     const [selectedaddressid, setselectedaddressid] = useState("")
@@ -48,35 +51,36 @@ function UpdateProfile() {
 
 
     let lid = 0;
-    const getloggeduser = async () => {
-        try {
-            let response = await axios.get('http://127.0.0.1:8000/api/signup/');
-            // console.log("users: "+response.data);
-            // setusers(response.data);
-            const loggedInUser = response.data.find(user => user.logged === true);
-            console.log(loggedInUser)
-            if (loggedInUser) {
-                lid = loggedInUser.id;
-                console.log("lid: ", lid)
-                setoldpass(loggedInUser.password)
-                setloggedid(loggedInUser.id);
-                // lid=loggedInUser.id
-            }
-            else {
-                console.log("no logged user")
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    }
-    useEffect(() => {
-        getloggeduser()
-    }, [loggedid])
+    // const getloggeduser = async () => {
+    //     try {
+    //         let response = await axios.get('http://127.0.0.1:8000/api/signup/');
+    //         // console.log("users: "+response.data);
+    //         // setusers(response.data);
+    //         const loggedInUser = response.data.find(user => user.logged === true);
+    //         console.log(loggedInUser)
+    //         if (loggedInUser) {
+    //             lid = loggedInUser.id;
+    //             console.log("lid: ", lid)
+    //             setoldpass(loggedInUser.password)
+    //             setuserId(loggedInUser.id);
+    //             // lid=loggedInUser.id
+    //         }
+    //         else {
+
+    //             console.log("no logged user")
+    //         }
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // }
+    // useEffect(() => {
+    //     getloggeduser()
+    // }, [userId])
 
 
-    const getprofile = (id) => {
+    const getprofile = async (id) => {
         try {
-            axios.get(`http://localhost:8000/api/profile/${id}/profile`)
+            await axios.get(`http://localhost:8000/api/profile/${id}/profile`)
                 .then(response => {
                     const profileData = response.data[0]; // Access the first object in the array
                     setprofile(profileData);
@@ -124,12 +128,14 @@ function UpdateProfile() {
         }
 
     }
-    // useEffect(() => {
-    //     getaddress()
-    //     getprofile()
+    useEffect(() => {
+        console.log(userId)
+        console.log(localStorage.getItem("userId"))
+        getaddress(userId)
+        getprofile(userId)
 
 
-    // },[])
+    }, [userId])
 
     // const adrsid="",
 
@@ -142,9 +148,9 @@ function UpdateProfile() {
         console.log("city:", editcity)
         console.log("state:", editstate)
         console.log("pincode:", editpincode)
-        axios.patch(`http://localhost:8000/api/address/${loggedid}/address/`, {
+        axios.patch(`http://localhost:8000/api/address/${userId}/address/`, {
             id: editid,
-            userid: loggedid,
+            userid: userId,
             street: editstreet,
             city: editcity,
             state: editstate,
@@ -164,9 +170,9 @@ function UpdateProfile() {
         console.log("city:", addcity)
         console.log("state:", addstate)
         console.log("pincode:", addpincode)
-        axios.post(`http://localhost:8000/api/address/${loggedid}/address/`, {
+        axios.post(`http://localhost:8000/api/address/${userId}/address/`, {
             id: addid,
-            userid: loggedid,
+            userid: userId,
             street: addstreet,
             city: addcity,
             state: addstate,
@@ -174,51 +180,68 @@ function UpdateProfile() {
 
 
         })
-            .then(response => { console.log(response.data); setaddaddress("");getaddress(loggedid); window.location.reload() })
+            .then(response => { console.log(response.data); setaddaddress(""); getaddress(userId); window.location.reload() })
 
 
         // .catch(error => console.log(error.response.data));
     }
 
-    const submitHandler = (e) => {
+    const submitHandler = async (e) => {
         e.preventDefault()
 
-        let profl = axios.get(`http://localhost:8000/api/profile/${loggedid}/profile`)
-        console.log(profl)
-        if (profl) {
-            console.log("first")
-            axios.patch(`http://localhost:8000/api/profile/${loggedid}/profile`, {
-                userid: loggedid,
-                name: name,
-                email: email,
-                phone: phone,
-                address: primaryaddressid
-                // loggedid,name, email, phone, primaryaddressid
-            })
-                .then(response => {
-                    console.log(response.data);
-                    
-                    e.preventDefault()
+        const emailRegex = /^[a-zA-Z]+\d+(@gmail\.com)$/;
+        const isValidEmail = emailRegex.test(email);
+        if (isValidEmail) {
+            let profl = ""
+            try {
+                profl = await axios.get(`http://localhost:8000/api/profile/${userId}/profile`)
+            } catch (error) {
+
+            }
+
+            console.log(profl.length)
+            if (profl.data.length) {
+                console.log("first")
+                await axios.patch(`http://localhost:8000/api/profile/${userId}/profile`, {
+                    userid: userId,
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    address: primaryaddressid
+                    // userId,name, email, phone, primaryaddressid
                 })
-                .catch(error => console.log(error))
+                    .then(response => {
+                        console.log(response.data);
+
+                        e.preventDefault()
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })
+            }
+            else {
+                await axios.post(`http://localhost:8000/api/profile/${userId}/profile`, {
+                    userid: userId,
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    address: primaryaddressid
+                    // userId,name, email, phone, primaryaddressid
+                })
+                    .then(response => { console.log(response.data); setprof(""); })
+                    .catch(error => console.log(error))
+            }
         }
         else {
-            axios.post(`http://localhost:8000/api/profile/${loggedid}/profile`, {
-                userid: loggedid,
-                name: name,
-                email: email,
-                phone: phone,
-                address: primaryaddressid
-                // loggedid,name, email, phone, primaryaddressid
-            })
-                .then(response => { console.log(response.data); setprof(""); })
-                .catch(error => console.log(error))
+            seterr("Please enter valid email !!")
         }
+
+
 
 
         console.log("submittedaddress:", primaryaddressid)
         console.log("submittedname:", name)
-        console.log("submittedid:", loggedid)
+        console.log("submittedid:", userId)
         console.log("submittedemail:", email)
         console.log("submittedphone:", phone)
         // console.log("submittedaddress:",primaryaddressid)
@@ -231,27 +254,23 @@ function UpdateProfile() {
 
     const changepassword = (e) => {
         e.preventDefault()
-        console.log("oldpass:", oldpass)
-        console.log("oldenteredpass:", oldenteredpass)
-        if (oldpass !== oldenteredpass) {
-            seterr("Old password is not correct")
-        }
-        else {
-            axios.patch(`http://localhost:8000/api/signup/${loggedid}/`, {
-                password: newpass
-            })
-                .then(
-                    response => {
-                        console.log(response.data);
-                        setpass("");
-                        window.location.reload()
-                    }
-                )
 
-            // navigator("/store")
-        }
+        axios.patch(`http://localhost:8000/api/signup/${userId}/`, {
+            password: newpass
+        })
+            .then(
+                response => {
+                    console.log(response.data);
+                    setpass("");
+                    window.location.reload()
+                }
+            )
+
+        alert("New password saved successfully !!")
+        navigator("/store")
 
         console.log(err)
+
 
 
     }
@@ -262,8 +281,8 @@ function UpdateProfile() {
                 <div className='col-3'>
                     <div className='row'>
 
-                        <div className='col-12'><button type="button" class="btn btn-secondary col-12" name='adr' value={"adr"} onClick={(e) => { getaddress(loggedid); setadr(e.target.value); setprof(""); seteditadr(""); seteditprof(""); setpass("") }} >Address</button></div>
-                        <div className='col-12'><button type="button" class="btn btn-secondary col-12" name='prof' value={"prof"} onClick={(e) => { getprofile(loggedid); console.log(mainaddress); setpass(""); setadr(""); setprof(e.target.value); seteditadr(""); seteditprof("") }}>Profile</button></div>
+                        <div className='col-12'><button type="button" class="btn btn-secondary col-12" name='adr' value={"adr"} onClick={(e) => { getaddress(userId); setadr(e.target.value); setprof(""); seteditadr(""); seteditprof(""); setpass("") }} >Address</button></div>
+                        <div className='col-12'><button type="button" class="btn btn-secondary col-12" name='prof' value={"prof"} onClick={(e) => { getprofile(userId); console.log(mainaddress); setpass(""); setadr(""); setprof(e.target.value); seteditadr(""); seteditprof("") }}>Profile</button></div>
                         <div className='col-12'><button type="button" class="btn btn-secondary col-12" name='pass' value={"pass"} onClick={(e) => { setpass(e.target.value); setadr(""); setprof(""); seteditadr(""); seteditprof(""); }} >Change Password</button></div>
                         <div className='col-12'><button type="button" class="btn btn-secondary col-12" name='editprof' value={"editprof"} onClick={(e) => { setadr(""); setpass(""); setprof(""); seteditadr(""); seteditprof(e.target.value) }}>Update Profile</button></div>
                     </div>
@@ -387,7 +406,7 @@ function UpdateProfile() {
                         <div className='col-1'></div>
                     </div>}
 
-                    {prof && <div className='row m-3'>
+                    {prof && profile && <div className='row m-3'>
                         <div className='col-1'></div>
                         <div className='col-10 m-3 center'>
                             <table class="table table-info w-100">
@@ -432,6 +451,7 @@ function UpdateProfile() {
                         <div className='col-10 m-3'>
                             <form className='p-2' style={{ border: '2px solid grey' }} method='post' onSubmit={(e) => submitHandler(e)}>
                                 <div class="alert alert-secondary" role="alert"><b>Update Profile</b></div>
+                                {err && <div class="alert alert-danger" role="alert"><b>{err}</b></div>}
                                 <table className='w-100'>
                                     <div className=' mb-2 bg-dark text-white'>
                                         <tr className='row'>
@@ -455,7 +475,7 @@ function UpdateProfile() {
 
                                     <div className=' mb-2 bg-dark text-white'>
                                         <tr className='row'>
-                                            <th className='col-3 p-1'><label>Primary Address: </label></th>
+                                            <th className='col-3 p-2'><label>Primary Address: </label></th>
                                             <td className='col-7 p-1'><select class="form-control" onChange={(e) => { console.log("value:", e.target.value); setprimaryaddressid(e.target.value); }}>
                                                 <option >select address</option>
                                                 {address.map(adrs => (
@@ -482,12 +502,7 @@ function UpdateProfile() {
                                 {err && <div class="alert alert-danger" role="alert"><b>{err}</b></div>}
                                 <div class="alert alert-secondary" role="alert"><b>Update Address</b></div>
                                 <table className='w-100'>
-                                    <div className=' mb-2 bg-dark text-white'>
-                                        <tr className='row'>
-                                            <th className='col-3 p-1'><label >Old Password: </label></th>
-                                            <td className='col-7 p-1'><input type="password" className="form-control" placeholder="******" onChange={(e) => { setoldenteredpass(e.target.value) }} /></td>
-                                        </tr>
-                                    </div>
+
                                     <div className=' mb-2 bg-dark text-white'>
                                         <tr className='row'>
                                             <th className='col-3 p-1'><label >New Password: </label></th>
