@@ -5,7 +5,11 @@ from .models import signup
 
 
 
-class signupserializer(serializers.HyperlinkedModelSerializer):
+class signupserializer(serializers.ModelSerializer):
+    # url = serializers.HyperlinkedIdentityField(
+    #     view_name='signup:detail',
+    #     lookup_field='id'
+    # )
     id = serializers.ReadOnlyField()
     class Meta:
         model=signup

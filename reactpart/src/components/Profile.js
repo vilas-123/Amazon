@@ -79,19 +79,20 @@ function UpdateProfile() {
 
 
     const getprofile = async (id) => {
+        console.log("adr:",adr)
         try {
             await axios.get(`http://localhost:8000/api/profile/${id}/profile`)
                 .then(response => {
                     const profileData = response.data[0]; // Access the first object in the array
                     setprofile(profileData);
-                    console.log(profileData);
+                    // console.log(profileData);
                     const mainad = profileData.address;
                     console.log("address: ", mainad);
-
-                    const addr = axios.get(`http://localhost:8000/api/address/${id}/address/`)
+                    console.log("getidforaddress:",id)
+                    axios.get(`http://localhost:8000/api/address/${id}/address/`)
                         .then(response => {
                             const adr = response.data.find(ad => ad.id === mainad);
-                            console.log(adr)
+                            // console.log(adr)
                             if (adr) {
                                 setmainaddress(adr);
                                 // lid=loggedInUser.id
@@ -119,7 +120,7 @@ function UpdateProfile() {
         try {
             axios.get(`http://localhost:8000/api/address/${id}/address/`)
                 .then(response => {
-                    console.log(response.data);
+                    // console.log(response.data);
                     setaddress(response.data)
                 })
 
@@ -189,7 +190,8 @@ function UpdateProfile() {
     const submitHandler = async (e) => {
         e.preventDefault()
 
-        const emailRegex = /^[a-zA-Z]+\d+(@gmail\.com)$/;
+        const emailRegex = /(@gmail\.com)$/;
+        // const emailRegex = /^[a-zA-Z]+\d+(@gmail\.com)$/;
         const isValidEmail = emailRegex.test(email);
         if (isValidEmail) {
             let profl = ""
@@ -199,7 +201,7 @@ function UpdateProfile() {
 
             }
 
-            console.log(profl.length)
+            console.log("profile data: ",profl.data)
             if (profl.data.length) {
                 console.log("first")
                 await axios.patch(`http://localhost:8000/api/profile/${userId}/profile`, {
@@ -220,6 +222,7 @@ function UpdateProfile() {
                     })
             }
             else {
+                console.log("second")
                 await axios.post(`http://localhost:8000/api/profile/${userId}/profile`, {
                     userid: userId,
                     name: name,
@@ -255,7 +258,8 @@ function UpdateProfile() {
     const changepassword = (e) => {
         e.preventDefault()
 
-        axios.patch(`http://localhost:8000/api/signup/${userId}/`, {
+        axios.patch(`http://localhost:8000/api/signup/`, {
+            id:userId,
             password: newpass
         })
             .then(
@@ -270,9 +274,6 @@ function UpdateProfile() {
         navigator("/store")
 
         console.log(err)
-
-
-
     }
 
     return (
@@ -280,11 +281,10 @@ function UpdateProfile() {
             <div className='row m-4'>
                 <div className='col-3'>
                     <div className='row'>
-
-                        <div className='col-12'><button type="button" class="btn btn-secondary col-12" name='adr' value={"adr"} onClick={(e) => { getaddress(userId); setadr(e.target.value); setprof(""); seteditadr(""); seteditprof(""); setpass("") }} >Address</button></div>
-                        <div className='col-12'><button type="button" class="btn btn-secondary col-12" name='prof' value={"prof"} onClick={(e) => { getprofile(userId); console.log(mainaddress); setpass(""); setadr(""); setprof(e.target.value); seteditadr(""); seteditprof("") }}>Profile</button></div>
-                        <div className='col-12'><button type="button" class="btn btn-secondary col-12" name='pass' value={"pass"} onClick={(e) => { setpass(e.target.value); setadr(""); setprof(""); seteditadr(""); seteditprof(""); }} >Change Password</button></div>
-                        <div className='col-12'><button type="button" class="btn btn-secondary col-12" name='editprof' value={"editprof"} onClick={(e) => { setadr(""); setpass(""); setprof(""); seteditadr(""); seteditprof(e.target.value) }}>Update Profile</button></div>
+                        <div className='col-12'><button type="button" class="btn btn-secondary col-12" name='adr' value={"adr"} onClick={(e) => { getaddress(userId); setadr(e.target.value); setprof(""); seteditadr(""); seteditprof(""); setpass("");setaddaddress(""); }} >Address</button></div>
+                        <div className='col-12'><button type="button" class="btn btn-secondary col-12" name='prof' value={"prof"} onClick={(e) => { getprofile(userId); console.log(mainaddress); setpass(""); setadr(""); setprof(e.target.value); seteditadr(""); seteditprof("");setaddaddress("");  }}>Profile</button></div>
+                        <div className='col-12'><button type="button" class="btn btn-secondary col-12" name='pass' value={"pass"} onClick={(e) => { setpass(e.target.value); setadr(""); setprof(""); seteditadr(""); seteditprof("");setaddaddress("");  }} >Change Password</button></div>
+                        <div className='col-12'><button type="button" class="btn btn-secondary col-12" name='editprof' value={"editprof"} onClick={(e) => { setadr(""); setpass(""); setprof(""); seteditadr(""); seteditprof(e.target.value);setaddaddress("");  }}>Update Profile</button></div>
                     </div>
                 </div>
                 <div className='col-8 m-3'>

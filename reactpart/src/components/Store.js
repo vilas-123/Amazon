@@ -20,6 +20,17 @@ function Store() {
     const [categoryselect, setcategoryselect] = useState("")
 
 
+    const [currentpage, setcurrentpage] = useState(1)
+    const recordsperpage = 3;
+    const lastindex = currentpage * recordsperpage
+    const firstindex = lastindex - recordsperpage
+    let records = items.slice(firstindex, lastindex);
+    let npage = Math.ceil(items.length / recordsperpage);
+    let numbers =  [...Array(npage + 1).keys()].slice(1);
+
+    // console.log("records:", records);
+
+
     // const getuser = async () => {
     //     try {
     //         const response = await axios.get('http://127.0.0.1:8000/api/signup/');
@@ -46,7 +57,10 @@ function Store() {
     useEffect(() => {
         fetch("http://127.0.0.1:8000/api/Product/")
             .then(response => response.json())
-            .then(json => setItem(json))
+            .then(json => {
+                setItem(json)
+
+            })
 
         console.log(items)
 
@@ -173,19 +187,31 @@ function Store() {
     }
 
 
-    const filteritem=(e,val)=>{
+    const filteritem = (e, val) => {
         setItem(items.filter(i => (i.name.toString()).toLowerCase().includes((e.target.value.toString()).toLowerCase())));
     }
 
 
-
+    const nextpage = () => {
+        if (currentpage !== npage) {
+            setcurrentpage(currentpage + 1)
+        }
+    }
+    const prepage = () => {
+        if (currentpage !== 1) {
+            setcurrentpage(currentpage - 1)
+        }
+    }
+    const changepage = (id) => {
+        setcurrentpage(id)
+    }
 
     return (
         <div>
             {/* {JSON.stringify(items)} */}
             <div className="container mb-2 mt-2">
                 <div className="d-flex justify-content-end">
-                    <input className="form-control w-25 " type="search" placeholder="Search" aria-label="Search" onChange={(e)=>filteritem(e,e.target.value)}/>
+                    <input className="form-control w-25 " type="search" placeholder="Search" aria-label="Search" onChange={(e) => filteritem(e, e.target.value)} />
                     <button className="btn btn-outline-success my-2 my-sm-0 ml-2" type="submit">Search</button>
                 </div>
             </div>
@@ -206,7 +232,8 @@ function Store() {
 
                     <div className='container'>
                         <div className='row'>
-                            {items.map(item => (
+
+                            {records.map(item => (
 
                                 <div className='col-md-4 '>
                                     <div class="modal fade" id={`myModal${item.id}`} tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -281,6 +308,23 @@ function Store() {
                                 </div>
 
                             ))}
+                            <nav>
+                                <ul className='pagination'>
+                                    <li className='page-item'>
+                                        <a href='#' className='page-link' onClick={prepage}>Prev </a>
+                                    </li>
+                                    {
+                                        numbers.map((n, i) => {
+                                            <li className={`page-item ${currentpage === n ? 'active' : ''}`} key={i}>
+                                                <a href='#' className='page-item' onClick={() => changepage(n)}>{n} </a>
+                                            </li>
+                                        })
+                                    }
+                                    <li className='page-item'>
+                                        <a href='#' className='page-link' onClick={nextpage}>next </a>
+                                    </li>
+                                </ul>
+                            </nav>
                         </div>
                     </div>
 

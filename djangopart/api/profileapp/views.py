@@ -9,6 +9,7 @@ from rest_framework.response import Response
 class profileappview(APIView):
     def get(self, request, userid):
         pf = profilemodel.objects.filter(userid=userid)
+        print(pf)
         serializer = profileappserializer(pf, many=True)
         return Response(serializer.data)
 

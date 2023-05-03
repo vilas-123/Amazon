@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 function Index() {
     const navigate = useNavigate()
     const { userId, setUserId } = useContext(AuthContext)
-    const { superuser } = useContext(AuthContext)
+    const { superuser,setsuperuser } = useContext(AuthContext)
 
     const [loggedid, setloggedid] = useState("")
     const [users, setusers] = useState([])
@@ -51,7 +51,9 @@ function Index() {
         //         console.error(error);
         //     });
         setUserId("")
+        setsuperuser(false)
         localStorage.removeItem("userId")
+        localStorage.removeItem("superuser")
         navigate("/store")
     };
 
@@ -71,7 +73,7 @@ function Index() {
                         <li className="nav-item">
                             <div className='ml-3 mr-3'><Link to="store" replace={true} >Store</Link></div>
                         </li>
-                        {superuser === true && <li className="nav-item">
+                        {superuser  && <li className="nav-item">
                             <div className='ml-3 mr-3'><Link to="AddProduct" replace={true} >Add Product</Link></div>
                         </li>}
                         {userId && <li className="nav-item">

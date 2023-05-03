@@ -15,59 +15,109 @@ function Login() {
     const [errormsg, seterrormsg] = useState("")
     // const [users,setusers]=useState([])
 
-    const getuser = async () => {
-        try {
-            const response = await axios.get('http://127.0.0.1:8000/api/signup/');
-            console.log(response.data);
-            setusers(response.data);
-            //   console.log(response.data[0].id); // You can add this line to check if the users state has been updated correctly.
-        } catch (error) {
-            console.log(error);
-        }
-    }
+    // const getuser = async () => {
+    //     try {
+    //         const response = await axios.get('http://127.0.0.1:8000/api/signup/');
+    //         console.log(response.data);
+    //         setusers(response.data);
+    //         //   console.log(response.data[0].id); // You can add this line to check if the users state has been updated correctly.
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // }
 
 
-    useEffect(() => {
-        getuser()
-    }, [])
-
+    // useEffect(() => {
+    //     getuser()
+    // }, [])
 
 
     const submithandler = (e) => {
+        
         e.preventDefault()
-        const token = "0971ec5ae480ee59aee0a0f7ff6da785ef7b27cd"
-        console.log("users is" + users)
-        for (const user of users) {
-            console.log(user)
-            if (user.email === email && user.password === password) {
-                // axios.patch(`http://127.0.0.1:8000/api/signup/${user.id}/`,
-                //     { logged: true },
-                //     {
-                //         headers: {
-                //             'Content-Type': 'application/json',
-                //             'Authorization': `Bearer ${token}` // add your token here
-                //         }
-                //     })
-                //     .then(response => {
-                //         console.log(response.data);
-                //     })
-                //     .catch(error => {
-                //         console.error(error); 
-                //     });
-                setUserId(user?.id)
-                setsuperuser(user?.superuser)
-                // setoldpassword(user?.password)
-                localStorage.setItem("userId", user?.id)
-                navigate("/store")
-            }
-            else {
-                seterrormsg("Email or Password is wrong !!!")
-            }
+        console.log("email: ",email,"pass: ",password)
+        if(email==="" ||password===""){
+            seterrormsg("Please fill all the details !!")
         }
+        else{
+            axios.post('http://127.0.0.1:8000/api/signup/',{
+                email:email,
+                password:password})
+                .then(response=>{
+                console.log("response:",response)
+                if(response.data=="Not found"){
+                    seterrormsg("User not found")
+                }
+                else{
+                    console.log("responseuser:",response.data.userid)
+                    setUserId(response.data.userid)
+                    setsuperuser(response.data.superuser)
+                    localStorage.setItem("userId", response.data.userid)
+                    localStorage.setItem("superuser", response.data.superuser)
+                    navigate("/store")
+                }
+                
+                })
+                .catch(err=>{
+                    seterrormsg("Email or password is wrong !!!");
+                    console.log(err)
+                })
 
-
+    
+            // if(response){
+                
+            // }
+            // else{
+               
+            // }
+        }
+        
+        // .then(json=>{
+        //     console.log(json)
+        //     setUserId(json?.userid)
+        //     setsuperuser(json?.superuser)
+        //     localStorage.setItem("userId", json?.userid)
+        //     navigate("/store")
+        // })
+        
+                
 
     }
+
+    // const submithandler = (e) => {
+    //     e.preventDefault()
+    //     const token = "0971ec5ae480ee59aee0a0f7ff6da785ef7b27cd"
+    //     console.log("users is" + users)
+    //     for (const user of users) {
+    //         console.log(user)
+    //         if (user.email === email && user.password === password) {
+    //             // axios.patch(`http://127.0.0.1:8000/api/signup/${user.id}/`,
+    //             //     { logged: true },
+    //             //     {
+    //             //         headers: {
+    //             //             'Content-Type': 'application/json',
+    //             //             'Authorization': `Bearer ${token}` // add your token here
+    //             //         }
+    //             //     })
+    //             //     .then(response => {
+    //             //         console.log(response.data);
+    //             //     })
+    //             //     .catch(error => {
+    //             //         console.error(error); 
+    //             //     });
+    //             setUserId(user?.id)
+    //             setsuperuser(user?.superuser)
+    //             // setoldpassword(user?.password)
+    //             localStorage.setItem("userId", user?.id)
+    //             navigate("/store")
+    //         }
+    //         else {
+    //             seterrormsg("Email or Password is wrong !!!")
+    //         }
+    //     }
+
+
+
 
 
     return (
