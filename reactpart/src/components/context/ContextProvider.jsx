@@ -15,7 +15,7 @@ export const ContextProvider = ({ children }) => {
 
         }
         
-        if (localStorage.getItem("superuser")){
+        if (localStorage.getItem(Boolean("superuser"))){
 
             setsuperuser(Boolean(localStorage.getItem("superuser")))
         }

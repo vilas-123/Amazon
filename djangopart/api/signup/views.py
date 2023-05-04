@@ -3,6 +3,7 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from django.http import JsonResponse
 from rest_framework.decorators import action
+from django.contrib.auth.hashers import make_password, check_password
 
 from .models import signup
 from .serializers import signupserializer
@@ -28,9 +29,11 @@ class signupviewset(APIView):
         print(request.data.get('name'))
         if request.data.get('name'):
             # ,context={'request': request}
-            
+            # request.data.password=make_password(request.data.get('password'))
             serializer = signupserializer(data=request.data)
+            
             if serializer.is_valid():
+                # serializer.data.password=make_password(serializer.data.password)
                 serializer.save()
                 return Response(serializer.data)
             return Response(serializer.errors)
