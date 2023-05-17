@@ -12,49 +12,29 @@ function Signup() {
     const [email, setemail] = useState("")
     const [password, setpassword] = useState("")
 
-    useEffect(() => {
-        const getdata = async () => {
-            try {
-                const response = await axios.get('http://127.0.0.1:8000/api/signup/')
-                setuser(response.data)
-                console.log(response)
-            } catch (error) {
-                console.log(error)
-            }
-        }
-        // console.log("Hello")
-        getdata()
-    }, [])
-    // console.log("Hello2")
-    console.log(user)
-
 
     const submitHandler = (e) => {
         e.preventDefault()
-        // alert(user.data)
-        var flag = false
-        user.map(users => (
-            users.email === email ? flag = true : false
-        ))
-
-        if (flag) {
-            seterror("email already exist !!")
-        }
-        else {
+        
             const emailRegex = /^[a-zA-Z]+\d+(@gmail\.com)$/;
             const isValidEmail = emailRegex.test(email);
             if (isValidEmail) {
-                axios.post('http://127.0.0.1:8000/api/signup/', {
+                axios.post('localhost:8000/api/signup/', {
                     name, email, password
                 })
-                    .then(response => { console.log(response); navigate("/login") })
-                    .catch(error => console.log(error))
+                    .then(response => {
+                        if(response.data.success){
+                        console.log(response); navigate("/login")
+                    }
+                else{
+                    seterror(response.data.error)
+                }  })
+                    .catch(error => {console.log(error);seterror(error)})
             }
             else{
                 seterror("Please enter valid email id !!")
             }
 
-        }
 
 
 

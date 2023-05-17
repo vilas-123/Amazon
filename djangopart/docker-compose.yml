@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+    backend:
+      # image: djang
+      build: .
+      command: bash -c "python /app/manage.py makemigrations && python /app/manage.py migrate && python /app/manage.py runserver 0.0.0.0:8000"
+
+      ports:
+       - "8000:8000"
+    web:
+      image: react
+      ports: 
+       - "3000:3000"
+
+    # sqlite3:
+    #   image: nouchka/sqlite3:latest
+    #   stdin_open: true
+    #   tty: true
+    #   volumes:
+    #     - ./db/:/root/db/
+
+    
+      
+      

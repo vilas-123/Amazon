@@ -123,7 +123,6 @@ function UpdateProfile() {
                     // console.log(response.data);
                     setaddress(response.data)
                 })
-
         } catch (error) {
             console.log(error)
         }
@@ -456,20 +455,20 @@ function UpdateProfile() {
                                     <div className=' mb-2 bg-dark text-white'>
                                         <tr className='row'>
                                             <th className='col-3 p-1 '><label >Name: </label></th>
-                                            <td className='col-7 p-1'><input type="text" className="form-control" placeholder="Enter Name" onChange={(e) => { setname(e.target.value) }} /></td>
+                                            <td className='col-7 p-1'><input type="text" className="form-control"  placeholder="Enter Name" onChange={(e) => { setname(e.target.value) }} /></td>
                                         </tr>
                                     </div>
                                     <div className=' mb-2 bg-dark text-white'>
                                         <tr className='row'>
                                             <th className='col-3 p-1'> <label >Email address: </label></th>
-                                            <td className='col-7 p-1'><input type="email" className="form-control" placeholder="Enter email" onChange={(e) => { setemail(e.target.value) }} /></td>
+                                            <td className='col-7 p-1'><input type="email" className="form-control"  placeholder="Enter email" onChange={(e) => { setemail(e.target.value) }} /></td>
                                         </tr>
                                     </div>
 
                                     <div className=' mb-2 bg-dark text-white'>
                                         <tr className='row'>
                                             <th className='col-3 p-1'><label >Phone: </label></th>
-                                            <td className='col-7 p-1'><input type="Number" className="form-control" placeholder="9001083433" onChange={(e) => { setphone(e.target.value) }} /></td>
+                                            <td className='col-7 p-1'><input type="Number" className="form-control"  placeholder="9001083433" onChange={(e) => { setphone(e.target.value) }} /></td>
                                         </tr>
                                     </div>
 

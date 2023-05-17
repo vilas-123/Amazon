@@ -73,7 +73,7 @@ function Index() {
                         <li className="nav-item">
                             <div className='ml-3 mr-3'><Link to="store" replace={true} >Store</Link></div>
                         </li>
-                        {superuser===true  && <li className="nav-item">
+                        {localStorage.getItem("superuser")==='true'  && <li className="nav-item">
                             <div className='ml-3 mr-3'><Link to="AddProduct" replace={true} >Add Product</Link></div>
                         </li>}
                         {userId && <li className="nav-item">
