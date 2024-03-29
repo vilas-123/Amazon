@@ -21,54 +21,33 @@ class signupviewset(APIView):
     # queryset = signup.objects.all()
     # serializer_class = signupserializer
 
-    def get(self,request):
-            sign = signup.objects.all()
-            serializer = signupserializer(sign, many=True)
-            return Response(serializer.data)
+    def get(self, request):
+        sign = signup.objects.all()
+        serializer = signupserializer(sign, many=True)
+        return Response(serializer.data)
 
     def post(self, request):
-        print(request.data.get('name'))
-        if request.data.get('name'):
-            # ,context={'request': request}
-            # request.data.password=make_password(request.data.get('password'))
+        email = request.data.get('email')
+        password = request.data.get('password')
 
-            mail=request.data.get('email')
-            try:
-                signup_obj=signup.objects.filter(email=mail)
-                if signup_obj:
-                    raise ValidationError('email id already exists')
-                else:
-                    serializer = signupserializer(data=request.data)
-                    if serializer.is_valid():
-                        # serializer.data.password=make_password(serializer.data.password)
-                        serializer.save()
-                        return Response(serializer.data)
-                    return Response(serializer.errors)
-            except ValidationError as e:
-                return Response({'success': False,'error':e})
+        try:
+            # Check if the email already exists
+            if signup.objects.filter(email=email).exists():
+                raise ValidationError('Email already exists')
 
-            
-        else :
-            print("1")
-            
-            mail = request.data.get('email')
-            passw = request.data.get('password')
-            print("email:",mail,"pass: ",passw)
-            signup_obj = signup.objects.filter(email=mail, password=passw).first()
-            print(signup_obj)
-            if signup_obj:
-                data = {
-                    'userid': signup_obj.id,
-                    'superuser': signup_obj.superuser,
-                }
-                # print(data.userid)
-                return Response(data)
-            return Response("Not found")
+            serializer = signupserializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'success': True, 'message': 'User created successfully'})
+            else:
+                return Response({'success': False, 'error': serializer.errors})
+        except Exception as e:
+            return Response({'success': False, 'error': str(e)})
 
     def patch(self, request):
-        loggedid=request.data.get('id')
+        loggedid = request.data.get('id')
         log = signup.objects.filter(id=loggedid).first()
-        print("log",log)
+        print("log", log)
         serializer = signupserializer(log, request.data, partial=True)
         if serializer.is_valid():
             serializer.save()

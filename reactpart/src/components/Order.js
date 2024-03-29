@@ -19,7 +19,7 @@ function Order() {
             const result = await axios.get("http://127.0.0.1:8000/api/Product/")
             setproducts(result.data)
 
-            console.log(products)
+          
 
         } catch (error) {
             console.log(error);
@@ -74,9 +74,9 @@ function Order() {
                     console.log("arr", arr)
                     return arr                // setcartitems(response.data)
                 })
-                .then(swdx => {
-                    console.log(swdx)
-                    setcartitem(swdx);
+                .then(response => {
+                    console.log(response)
+                    setcartitem(response);
 
 
                 })

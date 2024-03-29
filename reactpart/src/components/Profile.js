@@ -129,8 +129,7 @@ function UpdateProfile() {
 
     }
     useEffect(() => {
-        console.log(userId)
-        console.log(localStorage.getItem("userId"))
+
         getaddress(userId)
         getprofile(userId)
 
@@ -263,7 +262,6 @@ function UpdateProfile() {
         })
             .then(
                 response => {
-                    console.log(response.data);
                     setpass("");
                     window.location.reload()
                 }
